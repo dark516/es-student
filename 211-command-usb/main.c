@@ -13,6 +13,14 @@ const uint DEBOUNCE_MS = 20;
 char line[LINE_SIZE];
 uint line_length = 0;
 
+typedef void (*command_handler_t)(void);
+
+struct command_t
+{
+    const char *name;
+    command_handler_t handler;
+};
+
 bool get_button_debounce(uint pin)
 {
     bool state = gpio_get(pin);
@@ -20,30 +28,58 @@ bool get_button_debounce(uint pin)
     return state && gpio_get(pin);
 }
 
+void command_enable(void)
+{
+    led_set(true);
+    LOG_INF("led %s\n", led_is_on() ? "on" : "off");
+}
+
+void command_disable(void)
+{
+    led_set(false);
+    LOG_INF("led %s\n", led_is_on() ? "on" : "off");
+}
+
+void command_info(void)
+{
+    device_info();
+}
+
+void command_version(void)
+{
+    log_version();
+}
+
+void command_ping(void)
+{
+    printf("pong\n");
+}
+
+const struct command_t commands[] = {
+    {"enable", command_enable},
+    {"disable", command_disable},
+    {"info", command_info},
+    {"version", command_version},
+    {"ping", command_ping},
+};
+
+const uint command_count = sizeof(commands) / sizeof(commands[0]);
+
 void handle_command(const char *command)
 {
-    if (strcmp(command, "enable") == 0)
+    for (uint i = 0; i < command_count; i++)
     {
-        led_set(true);
-        LOG_INF("led %s\n", led_is_on() ? "on" : "off");
+        if (strcmp(command, commands[i].name) == 0)
+        {
+            if (commands[i].handler != NULL)
+            {
+                commands[i].handler();
+            }
+            return;
+        }
     }
-    else if (strcmp(command, "disable") == 0)
-    {
-        led_set(false);
-        LOG_INF("led %s\n", led_is_on() ? "on" : "off");
-    }
-    else if (strcmp(command, "version") == 0)
-    {
-        log_version();
-    }
-    else if (strcmp(command, "info") == 0)
-    {
-        device_info();
-    }
-    else
-    {
-        LOG_ERR("unknown command: %s\n", command);
-    }
+
+    LOG_ERR("unknown command: %s\n", command);
 }
 
 void read_line(void)

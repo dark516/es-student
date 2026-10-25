@@ -1,0 +1,32 @@
+задание: 2.1.2
+проект: 211-command-usb
+устройство: 2e8a:000a
+серийный номер: E6637C05E75DBE22
+порт: /dev/ttyACM0
+начало: 2026-10-26T02:56:10
+   0.000 --> enable
+   0.129 <-- enable
+   0.129 <-- dbg read_line:101 got enable
+   0.130 <-- inf command_enable:34 led on
+   2.132 --> disable
+   2.290 <-- disable
+   2.290 <-- dbg read_line:101 got disable
+   2.291 <-- inf command_disable:40 led off
+   4.293 --> info
+   4.390 <-- info
+   4.391 <-- dbg read_line:101 got info
+   4.391 <-- project: 211-command-usb
+   4.392 <-- repo: https://github.com/dark516/es-student
+   4.392 <-- board: pico
+   4.392 <-- serial: E6637C05E75DBE22
+   4.393 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   4.393 <-- pico-sdk: 2.3.0
+   6.395 --> ping
+   6.491 <-- ping
+   6.492 <-- dbg read_line:101 got ping
+   6.492 <-- pong
+   8.495 --> nosuchcommand
+   8.772 <-- nosuchcommand
+   8.773 <-- dbg read_line:101 got nosuchcommand
+   8.773 <-- err handle_command:82 unknown command: nosuchcommand
+итог: отправлено команд 5, принято строк 20
