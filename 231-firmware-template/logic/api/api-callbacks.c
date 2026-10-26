@@ -1,5 +1,6 @@
 #include "api-commands.h"
 #include <errno.h>
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +15,9 @@
 
 static bool parse_u32(const char *text, uint32_t *value)
 {
+    if (*text == '\0') return false;
+    for (const char *p = text; *p != '\0'; p++)
+        if (!isdigit((unsigned char)*p)) return false;
     char *end;
     errno = 0;
     unsigned long number = strtoul(text, &end, 10);
@@ -52,7 +56,7 @@ static void cmd_pi_start(const command_t *command)
         printf("error: usage pi_start [<terms>]\n");
         return;
     }
-    if (terms == 0) { printf("error: terms must be greater than zero\n"); return; }
+    if (terms == 0) { printf("error: terms must be greater than 0\n"); return; }
     if (!pi_task_start(terms)) { printf("error: pi is busy\n"); return; }
     printf("pi: started, %u terms\n", (unsigned)terms);
 }
