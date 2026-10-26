@@ -8,6 +8,7 @@
 #include "device.h"
 #include "profiling.h"
 #include "led-task.h"
+#include "button-task.h"
 
 typedef void (*api_callback_t)(const command_t *command);
 typedef struct
@@ -122,6 +123,14 @@ static void cmd_led_period(const command_t *command)
     print_led();
 }
 
+static void cmd_button(const command_t *command)
+{
+    if (command->argc != 0) { printf("error: usage button\n"); return; }
+    printf("button: %s, presses %u\n",
+           button_task_is_pressed() ? "pressed" : "released",
+           (unsigned)button_task_get_press_count());
+}
+
 static const api_command_t commands[] = {
     {"info", "device passport", cmd_info},
     {"uptime", "time since reset", cmd_uptime},
@@ -132,6 +141,7 @@ static const api_command_t commands[] = {
     {"led_disable", "turn LED off", cmd_led_disable},
     {"led_blink", "blink LED", cmd_led_blink},
     {"led_period", "set period: led_period <period_ms>", cmd_led_period},
+    {"button", "button state and press count", cmd_button},
 };
 
 static void print_help(void)
