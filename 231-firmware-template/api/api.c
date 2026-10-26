@@ -7,6 +7,7 @@
 #include "pico/stdlib.h"
 #include "device.h"
 #include "profiling.h"
+#include "led-task.h"
 
 typedef void (*api_callback_t)(const command_t *command);
 typedef struct
@@ -80,12 +81,57 @@ static void cmd_main_time_reset(const command_t *command)
     printf("max reset\n");
 }
 
+static const char *led_state_name(void)
+{
+    switch (led_task_get_state())
+    {
+    case LED_STATE_OFF: return "off";
+    case LED_STATE_ON: return "on";
+    case LED_STATE_BLINK: return "blink";
+    }
+    return "unknown";
+}
+
+static void print_led(void)
+{
+    printf("led: %s, period %u ms\n", led_state_name(), (unsigned)led_task_get_period_ms());
+}
+
+static void cmd_led_enable(const command_t *command)
+{
+    if (command->argc != 0) { printf("error: usage led_enable\n"); return; }
+    led_task_set_state(LED_STATE_ON); print_led();
+}
+static void cmd_led_disable(const command_t *command)
+{
+    if (command->argc != 0) { printf("error: usage led_disable\n"); return; }
+    led_task_set_state(LED_STATE_OFF); print_led();
+}
+static void cmd_led_blink(const command_t *command)
+{
+    if (command->argc != 0) { printf("error: usage led_blink\n"); return; }
+    led_task_set_state(LED_STATE_BLINK); print_led();
+}
+static void cmd_led_period(const command_t *command)
+{
+    uint32_t period_ms;
+    if (command->argc != 1 || !parse_u32(command->argv[0], &period_ms))
+    { printf("error: usage led_period <period_ms>\n"); return; }
+    if (!led_task_set_period_ms(period_ms))
+    { printf("error: period_ms must be greater than 0\n"); return; }
+    print_led();
+}
+
 static const api_command_t commands[] = {
     {"info", "device passport", cmd_info},
     {"uptime", "time since reset", cmd_uptime},
     {"calc_pi", "calculate pi: calc_pi [terms]", cmd_calc_pi},
     {"main_time_exec", "superloop iteration: average and maximum", cmd_main_time_exec},
     {"main_time_reset", "reset maximum iteration", cmd_main_time_reset},
+    {"led_enable", "turn LED on", cmd_led_enable},
+    {"led_disable", "turn LED off", cmd_led_disable},
+    {"led_blink", "blink LED", cmd_led_blink},
+    {"led_period", "set period: led_period <period_ms>", cmd_led_period},
 };
 
 static void print_help(void)
