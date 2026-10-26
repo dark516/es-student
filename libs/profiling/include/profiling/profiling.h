@@ -4,6 +4,10 @@
 
 #define PROFILING_STOPWATCH_COUNT 5
 
+#ifndef PROFILING_ENABLED
+#define PROFILING_ENABLED 1
+#endif
+
 // 32-битная сумма длительностей переполняется примерно через 71 минуту.
 typedef struct {
     const char *name;
@@ -13,7 +17,12 @@ typedef struct {
 } profiling_result_t;
 
 void profiling_stopwatch_init(uint32_t id, const char *name);
+#if PROFILING_ENABLED
 void profiling_start(uint32_t id);
 void profiling_stop(uint32_t id);
+#else
+#define profiling_start(id) ((void)0)
+#define profiling_stop(id) ((void)0)
+#endif
 bool profiling_get(uint32_t id, profiling_result_t *result);
 void profiling_reset(void);
