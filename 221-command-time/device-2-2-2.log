@@ -1,0 +1,63 @@
+задание: 2.2.2
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: E6637C05E75DBE22
+порт: /dev/ttyACM0
+начало: 2026-10-26T03:09:22
+   0.000 --> uptime
+   0.001 <-- uptime
+   0.001 <-- dbg read_line:120 got uptime
+   0.001 <-- uptime: 893 ms
+   0.402 --> boot_info
+   0.403 <-- boot_info
+   0.404 <-- dbg read_line:120 got boot_info
+   0.404 <-- vector table   0x10000100
+   0.404 <-- stack top    0x20042000
+   0.405 <-- reset        0x100001f7
+   0.405 <-- reset (even) 0x100001f6
+   0.405 <-- gpio in        0xd0000004
+   0.405 <-- led bit      0
+   0.406 <-- gpio_get     0
+   0.806 --> uptime
+   0.807 <-- uptime
+   0.807 <-- dbg read_line:120 got uptime
+   0.807 <-- uptime: 1699 ms
+   1.208 --> boot_info
+   1.209 <-- boot_info
+   1.209 <-- dbg read_line:120 got boot_info
+   1.210 <-- vector table   0x10000100
+   1.210 <-- stack top    0x20042000
+   1.210 <-- reset        0x100001f7
+   1.211 <-- reset (even) 0x100001f6
+   1.211 <-- gpio in        0xd0000004
+   1.211 <-- led bit      0
+   1.212 <-- gpio_get     0
+   1.613 --> uptime
+   1.614 <-- uptime
+   1.614 <-- dbg read_line:120 got uptime
+   1.614 <-- uptime: 2505 ms
+   2.016 --> boot_info
+   2.016 <-- boot_info
+   2.016 <-- dbg read_line:120 got boot_info
+   2.017 <-- vector table   0x10000100
+   2.017 <-- stack top    0x20042000
+   2.017 <-- reset        0x100001f7
+   2.018 <-- reset (even) 0x100001f6
+   2.018 <-- gpio in        0xd0000004
+   2.019 <-- led bit      1
+   2.019 <-- gpio_get     1
+   2.420 --> uptime
+   2.420 <-- uptime
+   2.420 <-- dbg read_line:120 got uptime
+   2.421 <-- uptime: 3312 ms
+   2.822 --> boot_info
+   2.822 <-- boot_info
+   2.822 <-- dbg read_line:120 got boot_info
+   2.823 <-- vector table   0x10000100
+   2.823 <-- stack top    0x20042000
+   2.824 <-- reset        0x100001f7
+   2.824 <-- reset (even) 0x100001f6
+   2.824 <-- gpio in        0xd0000004
+   2.825 <-- led bit      1
+   2.825 <-- gpio_get     1
+итог: отправлено команд 8, принято строк 48
