@@ -32,7 +32,17 @@ static bool parse_u32(const char *text, uint32_t *value)
 static void cmd_info(const command_t *command)
 {
     if (command->argc != 0) { printf("error: usage info\n"); return; }
-    device_info();
+    device_info_t info;
+    device_get_info(&info);
+    printf("name: %s\n", DEVICE_NAME);
+    printf("version: %s\n", FIRMWARE_VERSION);
+    printf("project: %s\n", DEVICE_PROJECT);
+    printf("repo: %s\n", DEVICE_REPO);
+    printf("board: %s\n", info.board);
+    printf("serial: %s\n", info.serial);
+    printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
+           (unsigned)info.manufacturer, (unsigned)info.part, (unsigned)info.revision);
+    printf("pico-sdk: %s\n", info.sdk_version);
 }
 
 static void cmd_uptime(const command_t *command)
@@ -67,17 +77,21 @@ static void cmd_pi(const command_t *command)
         printf("pi: not started\n");
 }
 
-static void cmd_main_time_exec(const command_t *command)
+static void cmd_profiling(const command_t *command)
 {
-    if (command->argc != 0) { printf("error: usage main_time_exec\n"); return; }
-    printf("iteration avg %.2f us, max %u us\n", profiling_avg_us(), (unsigned)profiling_max_us());
+    (void)command;
+    profiling_result_t result;
+    for (uint32_t id = 0; id < PROFILING_STOPWATCH_COUNT; id++)
+        if (profiling_get(id, &result))
+            printf("%-10s count %-10u mean %.2f us  max %u us\n", result.name,
+                   (unsigned)result.count, result.mean_us, (unsigned)result.max_us);
 }
 
-static void cmd_main_time_reset(const command_t *command)
+static void cmd_profiling_reset(const command_t *command)
 {
-    if (command->argc != 0) { printf("error: usage main_time_reset\n"); return; }
-    profiling_reset_max();
-    printf("max reset\n");
+    (void)command;
+    profiling_reset();
+    printf("profiling reset\n");
 }
 
 static const char *led_state_name(void)
@@ -134,8 +148,8 @@ static const api_command_t commands[] = {
     {"uptime", "time since reset", cmd_uptime},
     {"pi_start", "start calculation: pi_start [terms]", cmd_pi_start},
     {"pi", "calculation result", cmd_pi},
-    {"main_time_exec", "superloop iteration: average and maximum", cmd_main_time_exec},
-    {"main_time_reset", "reset maximum iteration", cmd_main_time_reset},
+    {"profiling", "stopwatch results", cmd_profiling},
+    {"profiling_reset", "reset stopwatches", cmd_profiling_reset},
     {"led_enable", "turn LED on", cmd_led_enable},
     {"led_disable", "turn LED off", cmd_led_disable},
     {"led_blink", "blink LED", cmd_led_blink},
