@@ -1,15 +1,14 @@
-#include "led-task.h"
-#include "pico/stdlib.h"
+#include "led-task/led-task.h"
+#include "platform/platform.h"
 #include "systime/systime.h"
 
 static led_state_t led_state;
 static uint32_t led_period_ms;
 static uint64_t last_toggle_us;
+static bool led_on;
 
 void led_task_init(void)
 {
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     led_period_ms = 1000;
     led_task_set_state(LED_STATE_BLINK);
 }
@@ -19,8 +18,8 @@ void led_task_set_state(led_state_t state)
     led_state = state;
     switch (state)
     {
-    case LED_STATE_OFF: gpio_put(PICO_DEFAULT_LED_PIN, false); break;
-    case LED_STATE_ON: gpio_put(PICO_DEFAULT_LED_PIN, true); break;
+    case LED_STATE_OFF: led_on = false; platform_led_set(led_on); break;
+    case LED_STATE_ON: led_on = true; platform_led_set(led_on); break;
     case LED_STATE_BLINK:
         last_toggle_us = systime_us() - (uint64_t)led_period_ms * 500u;
         break;
@@ -35,7 +34,11 @@ void led_task_handle(void)
     case LED_STATE_ON:
         break;
     case LED_STATE_BLINK:
-        if (systime_period_elapsed(&last_toggle_us, (uint64_t)led_period_ms * 500u)) gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN);
+        if (systime_period_elapsed(&last_toggle_us, (uint64_t)led_period_ms * 500u))
+        {
+            led_on = !led_on;
+            platform_led_set(led_on);
+        }
         break;
     }
 }

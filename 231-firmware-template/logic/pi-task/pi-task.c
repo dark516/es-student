@@ -1,5 +1,4 @@
-#include "pi-task.h"
-#include "pico/stdlib.h"
+#include "pi-task/pi-task.h"
 #include "systime/systime.h"
 
 // Один член ряда занимает около 4,7 мкс; 100 членов укладываются в 0,5 мс.

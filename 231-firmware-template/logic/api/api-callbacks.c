@@ -1,25 +1,16 @@
-#include "api.h"
+#include "api-commands.h"
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pico/stdlib.h"
 #include "device/device.h"
 #include "profiling/profiling.h"
 #include "systime/systime.h"
 #include "firmware.h"
-#include "led-task.h"
-#include "button-task.h"
-#include "pi-task.h"
-
-typedef void (*api_callback_t)(const command_t *command);
-typedef struct
-{
-    const char *name;
-    const char *help;
-    api_callback_t callback;
-} api_command_t;
+#include "led-task/led-task.h"
+#include "button-task/button-task.h"
+#include "pi-task/pi-task.h"
 
 static bool parse_u32(const char *text, uint32_t *value)
 {
@@ -149,7 +140,7 @@ static void cmd_button(const command_t *command)
            (unsigned)button_task_get_press_count());
 }
 
-static const api_command_t commands[] = {
+const api_command_t api_commands[] = {
     {"info", "device passport", cmd_info},
     {"uptime", "time since reset", cmd_uptime},
     {"pi_start", "start calculation: pi_start [terms]", cmd_pi_start},
@@ -163,32 +154,4 @@ static const api_command_t commands[] = {
     {"button", "button state and press count", cmd_button},
 };
 
-static void print_help(void)
-{
-    printf("%-16s %s\n", "help", "list of commands");
-    for (uint32_t i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
-        printf("%-16s %s\n", commands[i].name, commands[i].help);
-}
-
-void api_handle(const command_t *command)
-{
-    if (command->truncated)
-    {
-        printf("error: command longer than 63 characters or 4 arguments\n");
-        return;
-    }
-    if (strcmp(command->name, "help") == 0)
-    {
-        print_help();
-        return;
-    }
-    for (uint32_t i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
-    {
-        if (strcmp(command->name, commands[i].name) == 0)
-        {
-            commands[i].callback(command);
-            return;
-        }
-    }
-    printf("error: unknown command '%s', try help\n", command->name);
-}
+const uint32_t api_command_count = sizeof(api_commands) / sizeof(api_commands[0]);
